@@ -13,44 +13,58 @@ int PIN_GRN = 12;
 
 uint8_t current_mode_type = smart_home_msgs::ModeChange::FULL_OFF;
 
+void set_lights(int r, int y, int g)
+{
+	digitalWrite(PIN_RED, r);
+	digitalWrite(PIN_YLW, y);
+	digitalWrite(PIN_GRN, g);
+}
+
 void mode_change_callback(const smart_home_msgs::ModeChange& msg)
 {
 	current_mode_type = msg.mode_type;
+	if (current_mode_type == smart_home_msgs::ModeChange::FULL_ON)
+	{
+		set_lights(TLON, TLON, TLON);
+	}
+	else
+	{
+		set_lights(TLOFF, TLOFF, TLOFF);
+	}
 }
 
 void countdown_state_callback(const smart_home_msgs::CountdownState& msg)
 {
 	if (current_mode_type == smart_home_msgs::ModeChange::MORNING_COUNTDOWN)
 	{
-		int r = TLOFF, y = TLOFF, g = TLOFF;
 		switch(msg.state)
 		{
 			case smart_home_msgs::CountdownState::TO_RED:
-				r = TLON; y = TLOFF; g = TLOFF;
+				set_lights(TLON, TLOFF, TLOFF);
 				break;
 			case smart_home_msgs::CountdownState::TO_YELLOW:
-				r = TLOFF; y = TLON; g = TLOFF;
+				set_lights(TLOFF, TLON, TLOFF);
 				break;
 			case smart_home_msgs::CountdownState::TO_GREEN:
-				r = TLOFF; y = TLOFF; g = TLON;
+				set_lights(TLOFF, TLOFF, TLON);
 				break;
 			case smart_home_msgs::CountdownState::TO_ALL:
-				r = TLON; y = TLON; g = TLON;
+				set_lights(TLON, TLON, TLON);
+				break;
+			default:
+				set_lights(TLOFF, TLOFF, TLOFF);
 				break;
 		}
-		digitalWrite(PIN_RED, r);
-		digitalWrite(PIN_YLW, y);
-		digitalWrite(PIN_GRN, g);
 	}
 }
 
 ros::NodeHandle node_handle;
 ros::Subscriber<smart_home_msgs::ModeChange> mode_change_sub(
-	"smart_home_msgs/mode_change_chatter",
+	"smart_home/mode_change_chatter",
 	&mode_change_callback
 );
 ros::Subscriber<smart_home_msgs::CountdownState> countdown_state_sub(
-	"smart_home_msgs/countdown_state_chatter",
+	"smart_home/countdown_state_chatter",
 	&countdown_state_callback
 );
 
