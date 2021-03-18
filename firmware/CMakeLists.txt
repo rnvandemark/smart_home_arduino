@@ -10,11 +10,11 @@ include_directories(${ROS_LIB_DIR})
 add_definitions(-DUSB_CON)
 
 register_hardware_platform("${ARDUINO_SDK_PATH}/hardware/arduino/avr")
-set(mega.build.mcu atmega2560)
+set(mega.build.mcu atmega328p)
 set(mega.upload.speed 115200)
 generate_arduino_firmware(traffic_light_runner
 	SRCS TrafficLightRunner.cpp ${ROS_LIB_DIR}/time.cpp
-	BOARD mega
+	BOARD uno
 	PORT /dev/ttyUSB0
 	PROGRAMMER avrispmkii
 	SERIAL picocom -b 115200 -l @SERIAL_PORT@
