@@ -1,0 +1,5 @@
+# Generated ROS libraries utils
+sketchbook/libraries/ros_lib
+
+# Values that should stay hidden
+sketchbook/NetworkSecrets.h
